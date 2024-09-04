@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encryption Tool</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Encryption Tool</h1>
+        <form method="POST" class="encryption-form">
+            <div class="form-group">
+                <label for="plain_text">Plaintext:</label>
+                <input type="text" id="plain_text" name="plain_text" required>
+            </div>
+            <div class="form-group">
+                <label for="key">Key:</label>
+                <input type="text" id="key" name="key" required>
+            </div>
+            <div class="form-group">
+                <label for="mode">Encryption Mode:</label>
+                <select id="mode" name="mode" required>
+                    <option value="ECB">ECB</option>
+                    <option value="CBC">CBC</option>
+                </select>
+            </div>
+            <button type="submit" class="submit-button">Encrypt</button>
+        </form>
+
+        {% if cipher_text %}
+        <div class="result">
+            <h2>Encryption Result</h2>
+            <p><strong>Plaintext:</strong> {{ plain_text }}</p>
+            <p><strong>Key:</strong> {{ key }}</p>
+            <p><strong>Mode:</strong> {{ mode }}</p>
+            <p><strong>Cipher Text (Base64):</strong> {{ cipher_text }}</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
