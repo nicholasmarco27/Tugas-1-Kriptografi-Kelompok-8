@@ -15,9 +15,7 @@ def shift_bits(text):
 def ecb_encrypt(plain_text, key):
     cipher_text = xor_encrypt(plain_text, key)
     shifted_text = shift_bits(cipher_text)
-    # Encode with Base64
-    encoded_cipher_text = base64.b64encode(shifted_text.encode()).decode()
-    return encoded_cipher_text
+    return shifted_text
 
 def xor_block(block, key):
     # XOR a block of text with the key
@@ -52,9 +50,10 @@ def cbc_encrypt(plain_text, key, iv=None):
         # Update previous block
         prev_block = shifted_block
 
-    # Encode with Base64
-    encoded_cipher_text = base64.b64encode(cipher_text.encode()).decode()
-    return encoded_cipher_text
+    return cipher_text
+
+def to_hex(text):
+    return ''.join(format(ord(c), '02x') for c in text)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -62,6 +61,7 @@ def index():
         plain_text = request.form['plain_text']
         key = request.form['key']
         mode = request.form['mode']
+        output_format = request.form['output_format']  # Get output format from form
 
         if mode == 'ECB':
             cipher_text = ecb_encrypt(plain_text, key)
@@ -70,7 +70,15 @@ def index():
         else:
             cipher_text = "Mode tidak valid"
 
-        return render_template('index.html', cipher_text=cipher_text, plain_text=plain_text, key=key, mode=mode)
+        # Convert output to either base64 or hex based on user choice
+        if output_format == 'base64':
+            encoded_cipher_text = base64.b64encode(cipher_text.encode()).decode()
+        elif output_format == 'hex':
+            encoded_cipher_text = to_hex(cipher_text)
+        else:
+            encoded_cipher_text = "Format output tidak valid"
+
+        return render_template('index.html', cipher_text=encoded_cipher_text, plain_text=plain_text, key=key, mode=mode, output_format=output_format)
     
     return render_template('index.html')
 

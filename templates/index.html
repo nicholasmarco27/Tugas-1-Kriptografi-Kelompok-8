@@ -25,6 +25,13 @@
                     <option value="CBC">CBC</option>
                 </select>
             </div>
+            <div class="form-group">
+                <label for="output_format">Output Format:</label>
+                <select id="output_format" name="output_format" required>
+                    <option value="hex">Hexadecimal</option>
+                    <option value="base64">Base64</option>
+                </select>
+            </div>
             <button type="submit" class="submit-button">Encrypt</button>
         </form>
 
@@ -34,7 +41,8 @@
             <p><strong>Plaintext:</strong> {{ plain_text }}</p>
             <p><strong>Key:</strong> {{ key }}</p>
             <p><strong>Mode:</strong> {{ mode }}</p>
-            <p><strong>Cipher Text (Base64):</strong> {{ cipher_text }}</p>
+            <p><strong>Output Format:</strong> {{ output_format }}</p>
+            <p><strong>Cipher Text:</strong> {{ cipher_text }}</p>
         </div>
         {% endif %}
     </div>
