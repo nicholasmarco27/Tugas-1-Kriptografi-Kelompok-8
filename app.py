@@ -3,10 +3,6 @@ import base64
 
 app = Flask(__name__)
 
-def pad_pkcs5(text, block_size):
-    pad_len = block_size - (len(text) % block_size)
-    return text + chr(pad_len) * pad_len
-
 def xor_encrypt(plain_text, key):
     # XOR encryption
     cipher_text = ''.join(chr(ord(c) ^ ord(k)) for c, k in zip(plain_text, key))
@@ -23,9 +19,7 @@ def ecb_encrypt(plain_text, key):
     # Repeat the key if it's shorter than plaintext
     key = repeat_key(key, len(plain_text))
 
-    # Add PKCS5 padding
-    plain_text = pad_pkcs5(plain_text, len(key))
-
+    # Encrypt without padding
     cipher_text = xor_encrypt(plain_text, key)
     shifted_text = shift_bits(cipher_text)
     return shifted_text
@@ -35,18 +29,13 @@ def xor_block(block, key):
     return ''.join(chr(ord(b) ^ ord(k)) for b, k in zip(block, key))
 
 def cbc_encrypt(plain_text, key, iv=None):
-    # Set IV as binary 00000000 (8-bit)
-    if iv is None:
-        iv = chr(0) * len(key)  # Default IV set to 00000000 (binary)
-
     block_size = len(key)
 
-    # Repeat the key if it's shorter than plaintext
-    key = repeat_key(key, len(plain_text))
+    # Set IV as binary 00000000 (8-bit), length should match the plain_text
+    if iv is None:
+        iv = chr(0) * block_size  # Default IV set to 00000000 (binary) with the length of the block size
 
-    # Add PKCS5 padding
-    plain_text = pad_pkcs5(plain_text, block_size)
-
+    # Encrypt without padding
     cipher_text = ''
     prev_block = iv
 
