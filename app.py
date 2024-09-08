@@ -5,21 +5,14 @@ app = Flask(__name__)
 
 def xor_encrypt(plain_text, key):
     # XOR encryption
-    cipher_text = ''.join(chr(ord(c) ^ ord(k)) for c, k in zip(plain_text, key))
+    cipher_text = ''.join(chr(ord(c) ^ ord(key)) for c in plain_text)
     return cipher_text
 
 def shift_bits(text):
     # Geser 1 bit ke kiri
     return ''.join(chr((ord(c) << 1) & 0xFF) for c in text)
 
-def repeat_key(key, length):
-    return (key * (length // len(key))) + key[:length % len(key)]
-
 def ecb_encrypt(plain_text, key):
-    # Repeat the key if it's shorter than plaintext
-    key = repeat_key(key, len(plain_text))
-
-    # Encrypt without padding
     cipher_text = xor_encrypt(plain_text, key)
     shifted_text = shift_bits(cipher_text)
     return shifted_text
@@ -29,13 +22,11 @@ def xor_block(block, key):
     return ''.join(chr(ord(b) ^ ord(k)) for b, k in zip(block, key))
 
 def cbc_encrypt(plain_text, key, iv=None):
-    block_size = len(key)
-
-    # Set IV as binary 00000000 (8-bit), length should match the plain_text
+    # Set IV as binary 00000000 (8-bit)
     if iv is None:
-        iv = chr(0) * block_size  # Default IV set to 00000000 (binary) with the length of the block size
+        iv = chr(0) * len(key)  # Default IV set to 00000000 (binary)
 
-    # Encrypt without padding
+    block_size = len(key)
     cipher_text = ''
     prev_block = iv
 
